@@ -60,3 +60,26 @@ int bb_getattr(const char *path, struct stat *statbuf)
 
 	return retstat;
 }
+
+/** Read the target of a symbolic link
+ */
+
+int bb_readlink(const char *path, char *link, size_t size)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	log_msg("bb_readlink(path = \"%s\", link=\"%s\", size=%d)\n
+		path, link, size");
+	bb_fullpath(fpath, path);
+
+	retstart = readlink(fpath, link, size - 1);
+	if(retstat < 0)
+		retstat = bb_error("bb_readlink readlink");
+	else{
+		link[retstat = '\0'];
+		retstat = 0;
+	}
+
+	return retstat;
+}
