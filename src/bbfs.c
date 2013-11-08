@@ -84,3 +84,4 @@ int bb_readlink(const char *path, char *link, size_t size)
 	return retstat;
 }
 /* add the file link feature
+// delay
