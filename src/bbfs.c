@@ -141,5 +141,21 @@ int bb_unlink(const char *path)
 	if(retstat < 0)
 		retstat = bb_error("bb_unlink unlink");
 
-	return 
+	return retstat;
 }
+
+/* Remove a directory */
+int bb_rmdir(const char *path)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	log_msg("bb_rmdir(path = \"%s\")\n, path ");
+	bb_fullpath(fpath, path);
+	retstat = rmdir(fpath);
+	if(retstat < 0)
+		retstat = bb_error("bb_rmdir rmdir");
+
+	return retstat;
+}
+
