@@ -52,7 +52,7 @@ int bb_getattr(const char *path, struct stat *statbuf)
 		path, statbuf);
 	bb_fullpath(fpath, path);
 
-	retstart = lstat(fpath, startbuf);
+	retstat = lstat(fpath, startbuf);
 	if(retstat != 0)
 		retstat = bb_error("bb_getattr lstat");
 
@@ -159,3 +159,93 @@ int bb_rmdir(const char *path)
 	return retstat;
 }
 
+/* Create a symbolic link */
+int bb_symlink(const char *path, const char *link)
+{
+	int retstat = 0;
+	char flink[PATH_MAX];
+
+	bb_fullpath(flink, link);
+
+	retstat = symlink(path, flink);
+	if(retstat < 0)
+		retstat = bb_error("bb_symlink symlink");
+
+	return retstat;
+}
+
+/* Rename a file */
+int bb_rename(const char *path, const char *newpath)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+	char fnewpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+	bb_fullpath(fnewpath, newpath);
+
+	retstat = rename(fpath, fnewpath);
+	if(retstat < 0)
+		retstat = bb_error("bb_rename rename");
+
+	return retstat;
+}
+
+/* Create a hard link to a file */
+int bb_link(const char *paht, const char *newpath)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX], fnewpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+	bb_fullpath(fnewpath, newpath);
+
+	retstat = link(fpath, fnewpath);
+	if(retstat < 0)
+		retstat = bb_error("bb_link link");
+
+	return retstat;
+}
+
+/* Change the permission bits of a file */
+int bb_chmod(const char *path, mode_t mode)
+{
+	int retsat = 0;
+	char fpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+
+	retstat = chmod(fpath, path);
+	if(retstat < 0)
+		retsat = bb_error("bb_chmod chmod");
+
+	return retstat;
+}
+
+/* Change the owner and group of a file */
+int bb_chown(const char *path, uid_t uid, gid_t gid)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+
+	retstat = chown(fpath, uid, gid);
+	if(retstat < 0)
+		retstat = bb_error("bb_chown chown");
+
+	return retstat;
+}
+
+/* Change the size of a file */
+int bb_truncate(const char *path, off_t newsize)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	bb_fullpath(fpath, newsize);
+	if(retstat < 0)
+		bb_error("bb_truncate truncate");
+
+	return retstat;
+}
