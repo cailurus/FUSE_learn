@@ -73,7 +73,7 @@ int bb_readlink(const char *path, char *link, size_t size)
 		path, link, size");
 	bb_fullpath(fpath, path);
 
-	retstart = readlink(fpath, link, size - 1);
+	retstat = readlink(fpath, link, size - 1);
 	if(retstat < 0)
 		retstat = bb_error("bb_readlink readlink");
 	else{
@@ -192,7 +192,7 @@ int bb_rename(const char *path, const char *newpath)
 }
 
 /* Create a hard link to a file */
-int bb_link(const char *paht, const char *newpath)
+int bb_link(const char *path, const char *newpath)
 {
 	int retstat = 0;
 	char fpath[PATH_MAX], fnewpath[PATH_MAX];
@@ -210,14 +210,14 @@ int bb_link(const char *paht, const char *newpath)
 /* Change the permission bits of a file */
 int bb_chmod(const char *path, mode_t mode)
 {
-	int retsat = 0;
+	int retstat = 0;
 	char fpath[PATH_MAX];
 
 	bb_fullpath(fpath, path);
 
 	retstat = chmod(fpath, path);
 	if(retstat < 0)
-		retsat = bb_error("bb_chmod chmod");
+		retstat = bb_error("bb_chmod chmod");
 
 	return retstat;
 }
@@ -247,5 +247,82 @@ int bb_truncate(const char *path, off_t newsize)
 	if(retstat < 0)
 		bb_error("bb_truncate truncate");
 
+	return retstat;
+}
+
+/* Change the access and/or modification of a file */
+
+int bb_utime(const char *path, struct utimbuf *ubuf)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	bb_fullpath = utime(fpath, ubuf);
+	if(retstat < 0)
+		retstat = bb_error("bb_utime utime");
+
+	return retstat;
+}
+
+/* File open operation */
+
+int bb_open(const char *path, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	int fd;
+	char fpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+	fd = open(fpath, fi->flags);
+	if(fd < 0)
+		retstat = bb_error("bb_open open");
+
+	fi->fh = fd;
+	log_fi(fi);
+
+	return retstat;
+}
+
+/* Read data from a open file */
+int bb_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	log_fi(fi);
+	retstat = pread(fi->fh, buf, size, offset);
+	if(retstat < 0)
+		retstat = bb_error("bb_read read");
+
+	return retstat;
+}
+
+/* Write data to an open file*/
+int bb_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	log_fi(fi);
+	retstat = pwrite(fi->fh, buf, size, offset);
+	if(retstat < 0)
+		retstat = bb_error("bb_write pwrite");
+	return retstat;
+}
+
+/* Get the file system statistics */
+int bb_statfs(const char *path, struct statvfs *statv)
+{
+	int retstat = 0;
+	char fpath[PATH_MAX];
+
+	bb_fullpath(fpath, path);
+	retstat = statvfs(fpath, statv);
+	if(retstat < 0)
+		retstat = bb_error("bb_statfs statvfs");
+	return retstat;
+}
+
+/* Flush the cache data */
+int bb_flush(const char *path, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	log_fi(fi);
 	return retstat;
 }
