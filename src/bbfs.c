@@ -326,3 +326,13 @@ int bb_flush(const char *path, struct fuse_file_info *fi)
 	log_fi(fi);
 	return retstat;
 }
+
+/* Release an open file */
+int bb_release(const char *path, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	log_fi(fi);
+
+	retstat = close(fi->fh);
+	return retstat;
+}
