@@ -24,7 +24,7 @@ static int bb_error(char *str)
 
 // Check whether the given user is permitted to perform the given operation on the given
 
-// Paths here are all relative
+// ths here are all relative
 static void bb_fullpath(char fpath[PATH_MAX], const char *path)
 {
 	strcpy(fpath, BB_DATA->rootdir);
@@ -336,4 +336,17 @@ int bb_release(const char *path, struct fuse_file_info *fi)
 	retstat = close(fi->fh);
 	return retstat;
 }
-/* close file 
+/* synchronize file contents */
+int bb_fsync(const char *path, int datasync, struct fuse_file_info *fi)
+{
+	int retstat = 0;
+	log_fi(fi);
+	if(datasync)
+		retstat = fdatasync(fi->fh);
+	else
+		retstat = fsync(fi->fh);
+
+	if(retstat < 0)
+		bb_error("bb_fsync fsync");
+	return retstat;
+}
