@@ -1,5 +1,6 @@
 /*
  *gcc -Wall `pkg-config fuse --cflags --libs` -o bbfs bbfs.c
+ * gcc compile instruction
 */
 
 #include "params.h"
@@ -338,7 +339,7 @@ int bb_utime(const char *path, struct utimbuf *ubuf)
  *
  * Changed in version 2.2
  */
-int open(const char *path, struct fuse_file_info *fi)
+int bb_open(const char *path, struct fuse_file_info *fi)
 {
     int retstat = 0;
     int fd;
